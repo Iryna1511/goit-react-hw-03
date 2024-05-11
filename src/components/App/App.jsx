@@ -1,7 +1,7 @@
 import { useState } from "react";
-import "./App.css";
+import css from "./App.module.css";
 // import ContactForm from "../ContactForm/ContactForm";
-// import SearchBox from "../SearchBox/SearchBox";
+import SearchBox from "../SearchBox/SearchBox";
 import ContactList from "../ContactList/ContactList";
 
 function App() {
@@ -15,12 +15,22 @@ function App() {
   const addContact = () => {
     setContacts();
   };
+
+  const [inputValue, setInputValue] = useState("");
+  const handleChange = (evt) => {
+    setInputValue(evt.target.value);
+  };
+
+  const visibleContacts = contacts.filter((contact) =>
+    contact.name.toLowerCase().includes(inputValue.toLowerCase())
+  );
+
   return (
-    <div>
-      <h1>Phonebook</h1>
-      {/* <ContactForm />
-      <SearchBox /> */}
-      <ContactList userData={contacts} />
+    <div className={css.container}>
+      <h1 className={css.title}>Phonebook</h1>
+      {/* <ContactForm /> */}
+      <SearchBox handleChange={handleChange} value={inputValue} />
+      <ContactList contacts={visibleContacts} />
     </div>
   );
 }
