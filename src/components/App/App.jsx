@@ -1,36 +1,50 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import CONTACTS from "../../contacts.json";
 import css from "./App.module.css";
-// import ContactForm from "../ContactForm/ContactForm";
+import ContactForm from "../ContactForm/ContactForm";
 import SearchBox from "../SearchBox/SearchBox";
 import ContactList from "../ContactList/ContactList";
 
 function App() {
-  const [contacts, setContacts] = useState([
-    { id: "id-1", name: "Rosie Simpson", number: "459-12-56" },
-    { id: "id-2", name: "Hermione Kline", number: "443-89-12" },
-    { id: "id-3", name: "Eden Clements", number: "645-17-79" },
-    { id: "id-4", name: "Annie Copeland", number: "227-91-26" },
-  ]);
+  const [contacts, setContacts] = useState(() => {
+    const savedContacts = localStorage.getItem("saved-contacts");
+    if (savedContacts !== null) {
+      return JSON.parse(savedContacts);
+    }
+    return CONTACTS;
+  });
 
-  const addContact = () => {
-    setContacts();
+  const addContact = (newContact) => {
+    setContacts((prevContacts) => {
+      return [...prevContacts, newContact];
+    });
   };
 
-  const [inputValue, setInputValue] = useState("");
-  const handleChange = (evt) => {
-    setInputValue(evt.target.value);
+  const deleteContact = (contactId) => {
+    setContacts((prevContacts) => {
+      return prevContacts.filter((contact) => contact.id !== contactId);
+    });
+  };
+
+  useEffect(() => {
+    localStorage.setItem("saved-contacts", JSON.stringify(contacts));
+  }, [contacts]);
+
+  const [searchValue, setSearchValue] = useState("");
+  const handleSearch = (evt) => {
+    setSearchValue(evt.target.value);
   };
 
   const visibleContacts = contacts.filter((contact) =>
-    contact.name.toLowerCase().includes(inputValue.toLowerCase())
+    contact.name.toLowerCase().includes(searchValue.toLowerCase())
   );
 
   return (
     <div className={css.container}>
       <h1 className={css.title}>Phonebook</h1>
-      {/* <ContactForm /> */}
-      <SearchBox handleChange={handleChange} value={inputValue} />
-      <ContactList contacts={visibleContacts} />
+      <ContactForm onAdd={addContact} />
+      <SearchBox onSearch={handleSearch} value={searchValue} />
+      <ContactList onDelete={deleteContact} contacts={visibleContacts} />
     </div>
   );
 }

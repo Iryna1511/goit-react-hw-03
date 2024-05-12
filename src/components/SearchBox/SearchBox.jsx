@@ -1,7 +1,7 @@
 import { useId } from "react";
 import css from "./SearchBox.module.css";
 
-const SearchBox = ({ value, handleChange }) => {
+const SearchBox = ({ value, onSearch }) => {
   const id = useId();
   return (
     <div className={css.container}>
@@ -9,7 +9,7 @@ const SearchBox = ({ value, handleChange }) => {
         Find contacts by name
       </label>
       <input
-        onChange={handleChange}
+        onChange={onSearch}
         className={css.input}
         value={value}
         id={id}
